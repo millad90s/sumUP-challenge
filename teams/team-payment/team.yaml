@@ -1,0 +1,12 @@
+team: team-payment
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789012:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: invoices
+    visibility: private
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-4563"
