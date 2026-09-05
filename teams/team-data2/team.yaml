@@ -1,0 +1,12 @@
+team: team-data2
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789014:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: reelzpro3
+    visibility: private
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-098"
