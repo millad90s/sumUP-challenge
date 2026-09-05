@@ -56,19 +56,19 @@ terraform init -input=false -reconfigure
 case "$action" in
   plan)
     echo "[DEMO] planning ${team_name} (no real AWS account involved)"
-    terraform plan -input=false \
+    terraform plan -input=false -no-color \
       -state="$state_file" \
       -var="team_config_path=${team_yaml}"
     ;;
   apply)
     echo "[DEMO] simulated apply for ${team_name} — showing the plan a real apply would execute, nothing is actually created"
-    terraform plan -input=false \
+    terraform plan -input=false -no-color \
       -state="$state_file" \
       -var="team_config_path=${team_yaml}"
     ;;
   destroy)
     echo "[DEMO] simulated destroy for ${team_name} — showing the plan a real destroy would execute, nothing is actually destroyed"
-    terraform plan -destroy -input=false \
+    terraform plan -destroy -input=false -no-color \
       -state="$state_file" \
       -var="team_config_path=${team_yaml}"
     ;;
