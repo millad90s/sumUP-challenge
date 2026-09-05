@@ -9,11 +9,14 @@ terraform {
     }
   }
 
+  # Shared state bucket + lock table, created once by bootstrap/. Every
+  # team's init supplies its own `key` via -backend-config — see
+  # scripts/run-team.sh — so this block never mentions a specific team.
   backend "s3" {
-    bucket       = "acme-platform-terraform-state"
-    region       = "eu-west-1"
-    encrypt      = true
-    use_lockfile = true
+    bucket         = "acme-platform-terraform-state"
+    region         = "eu-west-1"
+    encrypt        = true
+    dynamodb_table = "acme-platform-terraform-locks"
   }
 }
 
@@ -38,7 +41,7 @@ locals {
 }
 
 module "team" {
-  source = "git::https://github.com/millad90s/sumUp-tf-module.git?ref=v1.0.0"
+  source = "git::https://github.com/millad90s/sumUp-tf-module.git?ref=v2.0.0"
 
   company_prefix         = "acme"
   team                   = local.team_config.team

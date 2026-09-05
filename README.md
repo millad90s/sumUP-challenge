@@ -11,6 +11,14 @@ public/private policy) live in a separate, versioned module repo —
 pinned by tag in `deploy/main.tf`. This repo only owns *which team gets what*
 (the declarations) and *how changes get planned/applied* (the pipeline).
 
+## `bootstrap/`
+
+One-time platform setup, run once before onboarding the first team: creates
+the shared S3 bucket (versioned, encrypted, private) and DynamoDB lock table
+that every team's `deploy/` backend points at. Has its own local state,
+since there's nothing to isolate it in yet — see
+[`bootstrap/README.md`](bootstrap/README.md).
+
 ## `deploy/`
 
 - **`main.tf`** — the one root config every team's plan/apply runs through.
@@ -20,17 +28,9 @@ pinned by tag in `deploy/main.tf`. This repo only owns *which team gets what*
   team's `team.yaml`, decodes it with `yamldecode()`, and passes the values
   into the `team` module (sourced from `platform-terraform-modules`, pinned
   to a tag — never a branch — so a module change only reaches teams via a
-  deliberate, reviewed version bump here).
-- **`demo/backend_override.tf.demo`** and **`demo/provider_override.tf.demo`**
-  — copied over the real `backend "s3"` / `provider "aws"` blocks by
-  `scripts/run-team.sh` before every run. They swap the real S3 backend for
-  a local one and the real AWS provider for a fake, credential-free one, so
-  CI (and local runs) never touch a real AWS account or state bucket. This
-  is what makes every `plan`/`apply`/`destroy` in this repo currently a
-  **demo**: `apply` and `destroy` compute and print the plan that action
-  would run, rather than executing it — see the comment at the top of
-  `run-team.sh` for why that's the only honest way to show a green
-  "apply"/"destroy" job with zero real infrastructure.
+  deliberate, reviewed version bump here). Its `backend "s3"` block names
+  the shared bucket/lock table `bootstrap/` creates, but never a specific
+  team's state key — that's supplied per run via `-backend-config`.
 
 ## `scripts/`
 
@@ -45,9 +45,12 @@ pinned by tag in `deploy/main.tf`. This repo only owns *which team gets what*
   `terraform init`, so a malformed file is rejected instantly, before any
   plan is attempted.
 - **`run-team.sh <team-name> <plan|apply|destroy>`** — the one entry point
-  for running Terraform against a team. Installs the demo overrides above,
-  initializes `deploy/` with that team's isolated local state file
-  (`deploy/.demo-state/<team>.tfstate`), and runs the requested action.
+  for running Terraform against a team. Runs `tflocal` (not `terraform`)
+  against the real backend/provider declared in `deploy/main.tf`, which
+  `tflocal` transparently redirects to LocalStack — no real AWS account
+  needed, and no separate override files to maintain. Real (non-demo) usage
+  is the same commands with plain `terraform` — see the comment at the top
+  of the script.
 
 ## `teams/`
 

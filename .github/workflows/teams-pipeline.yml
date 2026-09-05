@@ -129,17 +129,12 @@ jobs:
               body: `### [DEMO] Terraform plan — \`${{ matrix.team }}\`\n\n\`\`\`\n${body.slice(-60000)}\n\`\`\``,
             });
 
-  # ---------------------------------------------------------------------
-  # Merge to main: "apply" every changed-and-still-existing team. In this
-  # demo, that means computing and printing the plan an apply would run —
-  # see scripts/run-team.sh — not actually creating anything.
-  # ---------------------------------------------------------------------
+
   apply:
     needs: [detect, validate]
     if: github.event_name == 'push' && needs.detect.outputs.any_active == 'true'
     runs-on: ubuntu-latest
-    # Real pipeline: environment: platform-production, with required
-    # reviewers configured on that environment in repo settings.
+
     strategy:
       fail-fast: false
       matrix:

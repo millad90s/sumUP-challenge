@@ -35,12 +35,14 @@ scripts/run-team.sh team-alpha plan
 scripts/run-team.sh team-alpha apply
 ```
 
-This runs `deploy/` against a local, credential-free backend, with state for
-`team-alpha` kept isolated in its own file under `deploy/.demo-state/` —
-giving fully isolated state per team from one shared root module, without
-needing a real AWS account. `apply` and `destroy` compute and print the plan
-that action would run rather than executing it against real infrastructure
-(see the comment at the top of `run-team.sh`).
+This runs `deploy/` via `tflocal` against LocalStack, using the real S3
+backend declared in `deploy/main.tf` with `team-alpha`'s own state key
+(`teams/team-alpha/terraform.tfstate` in the shared bucket `bootstrap/`
+creates) — giving fully isolated state per team from one shared root
+module, without needing a real AWS account. `apply` and `destroy` run for
+real against LocalStack (`-auto-approve`) — safe there, but never do that
+against a real backend without a human reviewing a saved plan first (see
+the comment at the top of `run-team.sh`).
 
 ## Offboarding
 
