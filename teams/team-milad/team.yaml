@@ -1,0 +1,14 @@
+team: team-milad
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789013:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: reelzpro22
+    visibility: private
+  - name: sigma
+    visibility: public
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-0249"
