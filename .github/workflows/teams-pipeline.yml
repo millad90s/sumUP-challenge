@@ -37,7 +37,11 @@ jobs:
       - name: Detect changed teams
         id: changed
         run: |
-          base="origin/${{ github.event.pull_request.base.ref || 'main' }}"
+          if [[ -n "${{ github.event.pull_request.base.ref }}" ]]; then
+            base="origin/${{ github.event.pull_request.base.ref }}"
+          else
+            base="${{ github.event.before }}"
+          fi
           head="${{ github.event.pull_request.head.sha || github.sha }}"
           teams="$(scripts/detect-changed-teams.sh "$base" "$head")"
           echo "teams<<EOF" >> "$GITHUB_OUTPUT"
