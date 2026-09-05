@@ -11,16 +11,7 @@ public/private policy) live in a separate, versioned module repo —
 pinned by tag in `deploy/main.tf`. This repo only owns *which team gets what*
 (the declarations) and *how changes get planned/applied* (the pipeline).
 
-## Directory layout
-
-```
-deploy/           Single shared root Terraform config, identical for every team
-scripts/          Detection, validation, and run helpers used by CI and locally
-teams/            One directory per team — the only thing a team ever edits
-.github/workflows/  CI: plan/apply/destroy per team, plus deploy/ checks
-```
-
-### `deploy/`
+## `deploy/`
 
 - **`main.tf`** — the one root config every team's plan/apply runs through.
   It's never edited per team: which team it operates on is decided entirely
@@ -41,7 +32,7 @@ teams/            One directory per team — the only thing a team ever edits
   `run-team.sh` for why that's the only honest way to show a green
   "apply"/"destroy" job with zero real infrastructure.
 
-### `scripts/`
+## `scripts/`
 
 - **`detect-changed-teams.sh <base-ref> <head-ref>`** — diffs two git refs
   under `teams/*`, prints the changed team names (one per line). Used by CI
@@ -58,7 +49,7 @@ teams/            One directory per team — the only thing a team ever edits
   initializes `deploy/` with that team's isolated local state file
   (`deploy/.demo-state/<team>.tfstate`), and runs the requested action.
 
-### `teams/`
+## `teams/`
 
 One directory per team, holding only `team.yaml` — the single file a team
 owns. `team.yaml` is created externally (by the team itself, or an
