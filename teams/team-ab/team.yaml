@@ -1,0 +1,12 @@
+team: team-ab
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789014:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: files
+    visibility: private
+
+tags:
+  owner: millad90s222@gmail.com
+  cost_center: "CC-098"
