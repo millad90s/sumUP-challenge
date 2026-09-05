@@ -19,6 +19,8 @@ buckets:
     visibility: private
   - name: audit-logs
     visibility: private
+  - name: invoice
+    visibility: private
 
 tags:
   owner: team-alpha@company.com
