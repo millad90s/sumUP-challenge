@@ -1,0 +1,6 @@
+# Copied over main.tf's real `backend "s3"` block by scripts/run-team.sh so
+# `terraform init` never touches the real state bucket. State instead lives
+# in a local file passed via `-state=` per team — see run-team.sh.
+terraform {
+  backend "local" {}
+}

@@ -1,0 +1,66 @@
+name: Deploy config checks
+
+# deploy/main.tf is the one file every team's plan runs through, so a
+# change to it (syntax, formatting, or a misconfiguration Trivy would
+# catch) is checked here on every PR/push that touches it — independent of
+# teams-pipeline.yml, which only fires on teams/** changes.
+on:
+  pull_request:
+    paths:
+      - "deploy/**"
+  push:
+    branches: [main, master]
+    paths:
+      - "deploy/**"
+
+permissions:
+  contents: read
+
+env:
+  TF_VERSION: "1.9.8"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: terraform fmt (check only)
+        run: terraform fmt -check -recursive deploy
+
+      - name: terraform validate
+        working-directory: deploy
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+  # Advisory only (exit-code 0): surfaces IaC misconfigurations in the
+  # repo's Security tab without blocking merges. Tighten to exit-code 1
+  # once findings have been triaged and it's ready to gate.
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
+
+      - name: Trivy IaC scan
+        run: |
+          trivy config deploy \
+            --format sarif \
+            --output trivy-results.sarif \
+            --exit-code 0
+
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif

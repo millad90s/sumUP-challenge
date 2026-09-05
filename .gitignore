@@ -1,0 +1,6 @@
+.terraform/
+.terraform.lock.hcl
+deploy/.demo-state/
+deploy/backend_override.tf
+deploy/provider_override.tf
+*.tfplan
