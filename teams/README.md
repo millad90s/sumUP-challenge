@@ -21,8 +21,9 @@ changes when a team is onboarded, offboarded, or edits its buckets.
 `teams/<team-name>/team.yaml` is created externally — by the team itself or
 by an IDP/self-service tool — against the schema `validate-team-config.py`
 enforces (see that script for the required shape). No file outside that new
-one is touched — `platform-module/` and `deploy/` are never modified to add
-a team, so this scales the same way from 1 team to 300+.
+one is touched — the shared module (pinned by tag in `deploy/main.tf`) and
+`deploy/` itself are never modified to add a team, so this scales the same
+way from 1 team to 300+.
 
 Once `team.yaml` exists (buckets, visibility, trusted principals, tags), the
 team opens a PR.
@@ -45,5 +46,15 @@ that action would run rather than executing it against real infrastructure
 
 Delete `teams/<team-name>/`. The CI pipeline detects the removed directory
 and runs `scripts/run-team.sh <team-name> destroy` against that team's
-isolated state — see the root pipeline docs for the approval gate a real
-deployment would require on that step.
+isolated state — see [`.github/workflows/teams-pipeline.yml`](../.github/workflows/teams-pipeline.yml)
+(`destroy` job) for the approval gate a real deployment would require on
+that step.
+
+## Changes to `deploy/`
+
+A change to `deploy/main.tf` (e.g. bumping the pinned module `ref`) affects
+every team's plan at once, unlike a `teams/**` change which only affects
+the one team that edited its own file. That's checked separately by
+[`.github/workflows/deploy-checks.yml`](../.github/workflows/deploy-checks.yml)
+(`terraform fmt`/`validate` plus an advisory Trivy scan) rather than by this
+workflow.

@@ -7,21 +7,17 @@
 # visibility has no default on purpose — you must say "public" or "private"
 # for every bucket, or the plan will fail validation.
 
-team: team-alpha
+team: team-gamma
 
 # IAM principals allowed to assume this team's role (e.g. your CI/CD deploy
 # role, or an EKS IRSA role ARN). At least one is required.
 trusted_principal_arns:
-  - "arn:aws:iam::123456789012:role/team-alpha-ci-deploy"
+  - "arn:aws:iam::123456789012:role/team-gamma-ci-deploy"
 
 buckets:
-  - name: payment-events
-    visibility: private
-  - name: audit-logs
-    visibility: private
-  - name: invoice
+  - name: uploads
     visibility: private
 
 tags:
-  owner: team-alpha@company.com
-  cost_center: "CC-2001"
+  owner: team-gamma@company.com
+  cost_center: "CC-3001"
