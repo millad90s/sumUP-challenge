@@ -1,0 +1,12 @@
+team: tesm-data
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789013:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: uploads
+    visibility: public
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-333"
