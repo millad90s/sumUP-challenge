@@ -11,7 +11,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write # to comment the plan back on the PR
+  pull-requests: write 
 
 env:
   TF_VERSION: "1.9.8"
