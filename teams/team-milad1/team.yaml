@@ -1,4 +1,4 @@
-team: team-milad
+team: team-milad1
 
 trusted_principal_arns:
   - "arn:aws:iam::123456789013:role/team-gamma-ci-deploy"
