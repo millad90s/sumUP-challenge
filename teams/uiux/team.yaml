@@ -1,0 +1,14 @@
+team: uiux
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789014:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: mybucket-01
+    visibility: private
+  - name: mybucket-02
+    visibility: public
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-09822"
