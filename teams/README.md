@@ -46,11 +46,29 @@ the comment at the top of `run-team.sh`).
 
 ## Offboarding
 
-Delete `teams/<team-name>/`. The CI pipeline detects the removed directory
-and runs `scripts/run-team.sh <team-name> destroy` against that team's
-isolated state — see [`.github/workflows/teams-pipeline.yml`](../.github/workflows/teams-pipeline.yml)
+Remove `teams/<team-name>/team.yaml` so the CI pipeline detects it as
+removed and runs `scripts/run-team.sh <team-name> destroy` against that
+team's isolated state — see
+[`.github/workflows/teams-pipeline.yml`](../.github/workflows/teams-pipeline.yml)
 (`destroy` job) for the approval gate a real deployment would require on
 that step.
+
+Don't just `rm -rf` the file, though — move it to
+`teams/_offboarded/<team-name>/team.yaml` in the same PR (or a prompt
+follow-up commit). `teams/_offboarded/` is an archive: `git diff` still
+sees the file disappear from its original `teams/<team-name>/` path (so the
+`destroy` job still fires), but the record of what that team had — buckets,
+trusted principals, tags — isn't lost to `git log` archaeology. It's
+excluded from every team-detection script (`detect-changed-teams.sh`,
+`validate-team-config.py`), so nothing ever treats an archived file as a
+live team.
+
+Real infrastructure teardown should also never be one step: destroying the
+team's IAM role/policy is safe to automate immediately (cheap to recreate
+if it's a mistake), but the S3 buckets themselves — and whatever data is in
+them — should only ever be destroyed after a human approval and, ideally,
+a retention window, never automatically in the same run that revokes
+access.
 
 ## Changes to `deploy/`
 

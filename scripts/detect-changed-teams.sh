@@ -10,7 +10,8 @@
 # the other 299 teams. A change outside teams/ (e.g. platform-module/,
 # deploy/) is intentionally NOT reported here — that's a platform-wide
 # change and should be handled separately (see the workflow for how it's
-# treated).
+# treated). teams/_offboarded/ is an archive, not a live team — moving a
+# retired team.yaml there must never trigger a plan/apply/destroy for it.
 
 set -euo pipefail
 
@@ -27,5 +28,6 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 cd "$repo_root"
 
 git diff --name-only "$base_ref" "$head_ref" -- 'teams/*' \
+  | grep -v '^teams/_offboarded/' \
   | awk -F/ '{ print $2 }' \
   | sort -u
