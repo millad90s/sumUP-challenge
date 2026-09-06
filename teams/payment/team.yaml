@@ -1,0 +1,14 @@
+team: payment
+
+trusted_principal_arns:
+  - "arn:aws:iam::123456789015:role/team-gamma-ci-deploy"
+
+buckets:
+  - name: mybucket1
+    visibility: private
+  - name: uploads
+    visibility: public
+
+tags:
+  owner: millad90s@gmail.com
+  cost_center: "CC-092"
